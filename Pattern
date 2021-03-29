@@ -1,0 +1,283 @@
+process(clk, start, reset)--procesul se executa cand un element din lista de sensibilitate se modifica
+
+variable running: STD_LOGIC := '0';--intr un proces putem scrie de mai multe ori variabilele
+variable counter: STD_LOGIC_VECTOR(31 downto 0);
+variable mask: STD_LOGIC_VECTOR(31 downto 0) :="00000000000000100000000000000000";
+begin 
+
+    if(rising_edge(clk) )
+    then 
+     if(reset='1')
+     then
+        running := '0';
+        finish <= '0';
+        mask := "00000000000000100000000000000000";
+     elsif(start='1')
+         then
+            running := '1';
+            finish <= '0';
+      end if;
+      if(running = '1')
+      then
+     
+        if(counter = mask)
+        then 
+          outpu <= not outpu;
+          counter := "00000000000000000000000000000000";
+        
+          mask := mask - 46;--calculam de cate frontrui de ceas avem nevoie ca sa dureze 1,5 sec
+          if(mask <= "0000000000000000101110111000000")
+          then 
+          
+              mask := "00000000000000100000000000000000";
+              running := '0';
+              finish <= '1';
+          end if;
+        
+        end if;
+        counter := counter + 1;
+      end if;
+   end if; 
+end process;
+...............................................
+Pattern 1
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+
+entity Patern1 is
+    Port ( clk : in STD_LOGIC;
+           start: in STD_LOGIC;
+           reset : in std_logic;
+           finish: out STD_LOGIC;
+           output : out STD_LOGIC);
+
+end Patern1;
+
+architecture Behavioral of Patern1 is
+
+signal outpu: STD_LOGIC;
+begin
+
+process(clk, start, reset)--procesul se executa cand un element din lista de sensibilitate se modifica
+
+variable running: STD_LOGIC := '0';--intr un proces putem scrie de mai multe ori variabilele
+variable counter: STD_LOGIC_VECTOR(31 downto 0);
+variable mask: STD_LOGIC_VECTOR(31 downto 0):="00000000000000100000000000000000";
+begin 
+
+    if(rising_edge(clk) )
+    then 
+     if(reset='1')
+     then
+        running := '0';
+        finish <= '0';
+        mask := "00000000000000100000000000000000";
+     elsif(start='1')
+         then
+            running := '1';
+            finish <= '0';
+      end if;
+      if(running = '1')
+      then
+     
+        if(counter = mask)
+        then 
+          outpu <= not outpu;
+          counter := "00000000000000000000000000000000";
+        
+          mask := mask - 46;--calculam de cate frontrui de ceas avem nevoie ca sa dureze 1,5 sec
+          if(mask <= "0000000000000000101110111000000")
+          then 
+          
+              mask := "00000000000000100000000000000000";
+              running := '0';
+              finish <= '1';
+          end if;
+        
+        end if;
+        counter := counter + 1;
+      end if;
+   end if; 
+end process;
+
+output <= outpu;
+
+end Behavioral;
+......................................................
+Pattern 2
+
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+entity Patern2 is
+    Port ( clk : in STD_LOGIC;
+           reset : in std_logic;
+           start: in STD_LOGIC;
+           finish: out STD_LOGIC;
+           output : out STD_LOGIC);
+
+end Patern2;
+
+architecture Behavioral of Patern2 is
+
+signal outpu: STD_LOGIC;
+
+
+begin
+
+process(clk, start)
+
+variable running: STD_LOGIC := '0';
+variable counter: STD_LOGIC_VECTOR(31 downto 0);
+variable mask: STD_LOGIC_VECTOR(31 downto 0):="00000000000000000010111011100000";
+variable mask2: STD_LOGIC_VECTOR(31 downto 0):="00000000000000000001011101110000";
+variable creste: STD_LOGIC := '1';
+variable scaderi : std_logic_vector(2 downto 0);
+begin 
+
+    if(rising_edge(clk) )
+    then 
+    if(reset='1')
+         then
+            running := '0';
+            finish <= '0';
+     elsif(start='1')
+         then
+            running := '1';
+            scaderi := "000";
+            finish <= '0';
+      end if;
+      if(running = '1')
+      then
+     
+        if(counter = mask)
+        then 
+          outpu <= not outpu;
+          counter := "00000000000000000000000000000000";
+        
+         if(creste = '1')
+         then
+          mask := mask - 2;
+          if(mask <= mask2)
+          then 
+          
+              mask := "00000000000000000001011101110000";
+              mask2 := "00000000000000000010111011100000";
+              creste := '0';
+              --running := '0';
+              --finish <= '1';
+          end if;
+        elsif(creste = '0')
+        then 
+        mask := mask + 1;
+                  if(mask >= mask2)
+                  then 
+                  
+                      mask2 := "00000000000000000001011101110000";
+                      mask := "00000000000000000010111011100000";
+                      creste := '1';
+                      if(scaderi="010")-- aici il oprim
+                      then
+                        running := '0';
+                        finish <= '1';
+                      end if;
+                      scaderi:=scaderi+1;
+                      
+                  end if;
+        end if;
+        
+        end if;
+        counter := counter + 1;
+      end if;
+   end if; 
+end process;
+
+
+output <= outpu;
+
+
+end Behavioral;
+........................................................................
+
+Pattern 3
+
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+entity Patern3 is
+    Port ( clk : in STD_LOGIC;
+           start: in STD_LOGIC;
+           reset : in std_logic;
+           finish: out STD_LOGIC;
+           output : out STD_LOGIC);
+
+end Patern3;
+
+architecture Behavioral of Patern3 is
+
+
+signal outpu: STD_LOGIC;
+
+begin
+
+process(clk, start)
+
+variable running: STD_LOGIC := '0';
+variable counter: STD_LOGIC_VECTOR(31 downto 0);
+variable mask: STD_LOGIC_VECTOR(31 downto 0):="00000000000000000010111011100000";
+begin 
+
+    if(rising_edge(clk) )
+    then 
+    if(reset='1')
+         then
+            running := '0';
+            finish <= '0';
+     elsif(start='1')
+         then
+            running := '1';
+            finish <= '0';
+      end if;
+      if(running = '1')
+      then
+     
+        if(counter = mask)
+        then 
+          outpu <= not outpu;
+          counter := "00000000000000000000000000000000";
+        
+          mask := mask + 6;--calculam de cate frontrui de ceas avem nevoie ca sa dureze 3 sec
+          if(mask >= "00000000000000010000000000000000")
+          then 
+          
+              mask := "00000000000000000010111011100000";
+              running := '0';
+              finish <= '1';
+          end if;
+        
+        end if;
+        counter := counter + 1;
+      end if;
+   end if; 
+end process;
+
+
+output <= outpu;
+
+
+end Behavioral;
