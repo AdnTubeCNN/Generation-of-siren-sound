@@ -1,0 +1,46 @@
+process(start_debounced,finish,stare,clk)
+
+begin 
+if(rising_edge(clk) )
+     then
+         if(start_debounced = '1' and stare = "000")
+         then
+                   reset <= '0';
+                   stare <= "001";
+    elsif(stare = "001")
+    then 
+                   start <= "001";
+                   stare <= "010";
+   elsif(stare = "010" and finish(0) = '1')
+   then
+                   stare <= "011";
+    elsif(stare = "010")
+   then
+                   start <= "000";
+    elsif(stare = "011")
+    then
+                  start <= "010";
+                  stare <= "100";
+elsif(stare = "100" and finish(1) = '1')
+   then
+                 stare <= "101";
+   elsif(stare = "100")
+   then
+                 start <= "000";
+elsif(stare = "101")
+    then
+                  start <= "100";
+                  stare <= "110";
+elsif(stare = "110" and finish(2) = '1')
+   then
+                   stare <= "000";
+   elsif(stare = "110")
+   then
+                   start <= "000";
+   elsif(stare = "000")
+   then
+                   reset <= '1';
+    end if;
+end if;
+end process;
+
