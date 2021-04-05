@@ -1,1 +1,2 @@
 # Generation-of-siren-sound
+In Vivado Xilinx design suite, upon activation of a switch, a siren sound is generated on an external speaker module, which is the combination of rising and falling frequency signals. The siren will have three sound patterns: e.g. the first pattern consists of increasing the frequency value from 500Hz to 5 kHz, the second pattern consists of alternatingly increase and decrease the frequency from 5kHz to 10kHz and the third pattern consists of decreasing the frequency value from 10kHz to 1kHz.
